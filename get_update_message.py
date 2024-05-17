@@ -18,13 +18,13 @@ bot = telebot.TeleBot(telegram_bot_token);
 lastestUpdateId = 0
 
 try: 
-	with open('lastestUpdateId.txt''r') as updateFile:
+	with open('lastestUpdateId.txt','r') as updateFile:
 		savedID = updateFile.readline()
 		lastestUpdateId = int(savedID)
 except:
 	lastestUpdateId = 0
 
-
+print(f'오프셋 : {lastestUpdateId}')
 
 processedId = 0
 
