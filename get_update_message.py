@@ -28,7 +28,7 @@ except:
 
 processedId = 0
 
-messageList = bot.get_updates(offset=lastestUpdateId)
+messageList = bot.get_updates(offset=lastestUpdateId+1)
 for message in messageList:
 
 	# 여기에 들어왔다면 일단 처리 된것이다. 
