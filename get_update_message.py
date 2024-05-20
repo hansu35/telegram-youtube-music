@@ -45,25 +45,29 @@ for message in messageList:
 
 	if(text != None and (text.startswith('https://youtu.be') or text.startswith('https://music.youtube.com'))):
 		print('가자')
+		re = telebot.types.ReplyParameters(message_id=message.message.message_id,chat_id=message.message.chat.id, allow_sending_without_reply=True)
 		# print(subprocess.check_output(['yt-dlp', '-j', text]))
-		musicInfoString = subprocess.check_output(['yt-dlp', '-j', text])
-		musicInfo = json.loads(musicInfoString)
-		if(musicInfo != None and musicInfo['formats'] != None):
-			for f in musicInfo['formats']:
-				# print(f'{f.get('audio_ext','null')}/{f.get('video_ext','null')}/{f.get('resolution','null')}/{f.get('format_note','null')}/{f.get('filesize','null')}/')
-				# 오디오 포멧. 중간이상 품질, m4a 포멧 이면 다운로드 하자. 
-				if(f.get('resolution','null') == 'audio only' and f.get('format_note','null') == 'medium' and f.get('audio_ext','null') == 'm4a' and f.get('format_id','null')!= 'null'):
-					formatId = f.get('format_id','null')
-					subprocess.run(['yt-dlp', '--paths', './songs', '-f', formatId, text])
-					songList = os.listdir('./songs')
-					print(songList)
-					if(len(songList) > 0):
-						filePath = os.path.join('songs',songList[0])
-						print(f'file path : {filePath}')
-						re = telebot.types.ReplyParameters(message_id=message.message.message_id,chat_id=message.message.chat.id, allow_sending_without_reply=True)
-						bot.send_audio(chat_id=message.message.chat.id, audio=open(filePath,'rb'), reply_parameters=re)
-						#보내고 나면 삭제 한다. 
-						subprocess.run(['rm', '-rf', filePath])
+		try:
+			musicInfoString = subprocess.check_output(['yt-dlp', '-j', text])
+			musicInfo = json.loads(musicInfoString)
+			if(musicInfo != None and musicInfo['formats'] != None):
+				for f in musicInfo['formats']:
+					# print(f'{f.get('audio_ext','null')}/{f.get('video_ext','null')}/{f.get('resolution','null')}/{f.get('format_note','null')}/{f.get('filesize','null')}/')
+					# 오디오 포멧. 중간이상 품질, m4a 포멧 이면 다운로드 하자. 
+					if(f.get('resolution','null') == 'audio only' and f.get('format_note','null') == 'medium' and f.get('audio_ext','null') == 'm4a' and f.get('format_id','null')!= 'null'):
+						formatId = f.get('format_id','null')
+						subprocess.run(['yt-dlp', '--paths', './songs', '-f', formatId, text])
+						songList = os.listdir('./songs')
+						print(songList)
+						if(len(songList) > 0):
+							filePath = os.path.join('songs',songList[0])
+							print(f'file path : {filePath}')
+							bot.send_audio(chat_id=message.message.chat.id, audio=open(filePath,'rb'), reply_parameters=re)
+							#보내고 나면 삭제 한다. 
+							subprocess.run(['rm', '-rf', filePath])
+		except Exception as e:    # 모든 예외의 에러 메시지를 출력할 때는 Exception을 사용
+			bot.send_message(chat_id=message.message.chat.id, text=f'오류 발생 {e}', reply_parameters=re)
+			print('예외가 발생했습니다.', e)
 
 
 print(processedId)
