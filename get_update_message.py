@@ -43,7 +43,7 @@ for message in messageList:
 	text = message.message.text
 	print(f'test {text}')
 
-	if(text != None and text.startswith('https://youtu.be')):
+	if(text != None and (text.startswith('https://youtu.be') or text.startswith('https://music.youtube.com'))):
 		print('가자')
 		# print(subprocess.check_output(['yt-dlp', '-j', text]))
 		musicInfoString = subprocess.check_output(['yt-dlp', '-j', text])
